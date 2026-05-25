@@ -67,17 +67,15 @@ docker compose -f docker-compose.prod.yml logs -f frontend
 
 Port internal VPS:
 
-- Frontend Next.js: `127.0.0.1:3000`
-- Backend .NET API: `127.0.0.1:5241`
+- Docker web gateway: `127.0.0.1:8088`
 
 ## 5. aaPanel / Nginx Reverse Proxy
 
-Untuk domain yang sudah dibuat:
+Untuk domain yang sudah dibuat, aaPanel cukup diarahkan ke satu target:
 
-- `https://cmms.nusakaryadigital.com/` reverse proxy ke frontend `http://127.0.0.1:3000`
-- `https://cmms.nusakaryadigital.com/api/` reverse proxy ke backend `http://127.0.0.1:5241`
+- `https://cmms.nusakaryadigital.com/` reverse proxy ke Docker web gateway `http://127.0.0.1:8088`
 
-Contoh location block ada di `deploy/nginx-cmms.example.conf`. Masukkan location block itu ke konfigurasi Nginx website `cmms.nusakaryadigital.com` di aaPanel, lalu reload Nginx.
+Routing `/` ke frontend dan `/api/` ke backend ditangani oleh Nginx di dalam stack Docker melalui `deploy/nginx-stack.conf`.
 
 Aktifkan SSL Let's Encrypt untuk domain itu. Setelah SSL aktif, pastikan `.env` memakai:
 
