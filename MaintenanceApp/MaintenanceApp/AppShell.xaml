@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="MaintenanceApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:MaintenanceApp.Views"
+    Shell.FlyoutBehavior="Flyout"
+    Title="MaintenanceApp"
+    Shell.TabBarIsVisible="False"
+    Shell.FlyoutBackgroundColor="#3700B3"
+    Shell.ForegroundColor="White" 
+    Shell.BackgroundColor="#3700B3"
+    Shell.DisabledColor="Gray">
+
+
+    <Shell.FlyoutHeader>
+        <VerticalStackLayout Padding="20" Spacing="20" BackgroundColor="#3700B3">
+            <Label Text="Maintenance Application" TextColor="White" HorizontalOptions="Center" />
+            <Image Source="Resources/Images/maintenance.png" WidthRequest="100" />
+        </VerticalStackLayout>
+    </Shell.FlyoutHeader>
+
+    <FlyoutItem Title="Maintenance App" FlyoutDisplayOptions="AsMultipleItems">
+        <ShellContent
+            Route="login" Title="Login" ContentTemplate="{DataTemplate views:LoginPage}" Icon="Resources/Images/setting.png"/>
+        <ShellContent
+            Route="dashboard" Title="CMMS Dashboard" ContentTemplate="{DataTemplate views:CmmsDashboardPage}" Icon="Resources/Images/home.png"/>
+        <ShellContent
+            Route="assets" Title="Assets" ContentTemplate="{DataTemplate views:AssetListPage}" Icon="Resources/Images/maintenance.png"/>
+        <ShellContent
+            Route="work-orders" Title="Work Orders" ContentTemplate="{DataTemplate views:WorkOrderListPage}" Icon="Resources/Images/warning.png"/>
+        <ShellContent
+            Route="contractor-monitoring" Title="Contractor Monitoring" ContentTemplate="{DataTemplate views:ContractorMonitoringPage}" Icon="Resources/Images/monitoring.png"/>
+        <ShellContent
+            Route="spareparts" Title="Spareparts" ContentTemplate="{DataTemplate views:SparepartListPage}" Icon="Resources/Images/sparepart.png"/>
+        <ShellContent
+            Route="technicians" Title="Technicians" ContentTemplate="{DataTemplate views:TechnicianListPage}" Icon="Resources/Images/monitoring.png"/>
+        <ShellContent
+            Title="Home" ContentTemplate="{DataTemplate views:MainPage}" Icon="Resources/Images/home.png"/>
+        <ShellContent
+            Title="Preventive" ContentTemplate="{DataTemplate views:PreventivePage}" Icon="Resources/Images/schedule.png" />
+        <ShellContent
+            Title="Planned Downtime" ContentTemplate="{DataTemplate views:PlannedDowntimePage}" Icon="Resources/Images/downtimeplan.png" />
+        <ShellContent
+            Title="Machine Trouble" ContentTemplate="{DataTemplate views:MachineTroublePage}" Icon="Resources/Images/warning.png"/>
+        <ShellContent
+            Title="Realtime Monitoring" ContentTemplate="{DataTemplate views:RealtimeMonitoringPage}" Icon="Resources/Images/monitoring.png" />
+        <ShellContent
+            Title="Sparepart Check" ContentTemplate="{DataTemplate views:SparepartCheckPage}" Icon="Resources/Images/sparepart.png" />
+        <ShellContent
+            Title="Quick Update Report" ContentTemplate="{DataTemplate views:QuickUpdateReportPage}" Icon="Resources/Images/quickreport.png" />
+        <ShellContent
+            Title="Setting" ContentTemplate="{DataTemplate views:SettingPage}" Icon="Resources/Images/setting.png" />
+    </FlyoutItem>
+</Shell>

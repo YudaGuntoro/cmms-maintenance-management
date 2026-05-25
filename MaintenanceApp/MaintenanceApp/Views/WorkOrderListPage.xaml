@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MaintenanceApp.Views.WorkOrderListPage"
+             Title="Work Orders"
+             BackgroundColor="White"
+             Shell.BackgroundColor="#3700B3"
+             Shell.ForegroundColor="White"
+             Shell.TitleColor="White">
+    <Grid Padding="12" RowDefinitions="Auto,Auto,*" RowSpacing="10">
+        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6">
+            <Picker ItemsSource="{Binding StatusOptions}"
+                    SelectedItem="{Binding StatusFilter}" />
+            <Picker Grid.Column="1"
+                    ItemsSource="{Binding PriorityOptions}"
+                    SelectedItem="{Binding PriorityFilter}" />
+            <Picker Grid.Column="2"
+                    ItemsSource="{Binding TypeOptions}"
+                    SelectedItem="{Binding TypeFilter}" />
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <Button Text="Create WO"
+                    BackgroundColor="#3700B3"
+                    TextColor="White"
+                    Clicked="Create_Clicked" />
+            <Button Grid.Column="1"
+                    Text="Filter"
+                    BackgroundColor="#3700B3"
+                    TextColor="White"
+                    Clicked="Filter_Clicked" />
+        </Grid>
+
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding WorkOrders}"
+                        SelectionMode="Single"
+                        SelectionChanged="WorkOrders_SelectionChanged"
+                        EmptyView="No work orders found">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="0,4"
+                           Padding="12"
+                           CornerRadius="8"
+                           HasShadow="False"
+                           BorderColor="#E0E0E0">
+                        <VerticalStackLayout Spacing="4">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding WoNumber}"
+                                       FontAttributes="Bold"
+                                       TextColor="#202124" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Status}"
+                                       TextColor="#3700B3" />
+                            </Grid>
+                            <Label Text="{Binding Title}" TextColor="#202124" />
+                            <Label Text="{Binding Priority, StringFormat='Priority: {0}'}"
+                                   FontSize="12"
+                                   TextColor="#666666" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

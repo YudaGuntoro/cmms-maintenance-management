@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MaintenanceApp.Views.CreateWorkOrderPage"
+             Title="Create Work Order"
+             BackgroundColor="White"
+             Shell.BackgroundColor="#3700B3"
+             Shell.ForegroundColor="White"
+             Shell.TitleColor="White">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Picker x:Name="AssetPicker"
+                    Title="Asset"
+                    ItemsSource="{Binding Assets}"
+                    ItemDisplayBinding="{Binding AssetName}" />
+            <Entry x:Name="TitleEntry"
+                   Placeholder="Title" />
+            <Editor x:Name="DescriptionEditor"
+                    Placeholder="Description"
+                    HeightRequest="110" />
+            <Picker x:Name="TypePicker"
+                    Title="Maintenance Type"
+                    ItemsSource="{Binding TypeOptions}" />
+            <Picker x:Name="PriorityPicker"
+                    Title="Priority"
+                    ItemsSource="{Binding PriorityOptions}" />
+            <DatePicker x:Name="ScheduledDatePicker" />
+            <Button Text="Submit"
+                    BackgroundColor="#3700B3"
+                    TextColor="White"
+                    Clicked="Submit_Clicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

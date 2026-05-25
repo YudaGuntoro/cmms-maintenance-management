@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MaintenanceApp.Views.ContractorMonitoringPage"
+             Title="Contractor Monitoring"
+             BackgroundColor="#F5F7FA"
+             Shell.BackgroundColor="#3700B3"
+             Shell.ForegroundColor="White"
+             Shell.TitleColor="White">
+    <RefreshView IsRefreshing="{Binding IsBusy}"
+                 Refreshing="RefreshView_Refreshing">
+        <ScrollView>
+            <VerticalStackLayout Padding="14" Spacing="12">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="#B00020"
+                       IsVisible="{Binding HasError}" />
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                    <Frame Padding="12" CornerRadius="8" HasShadow="False" BorderColor="#DCE3EA" BackgroundColor="White">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Plans" FontSize="12" TextColor="#667085" />
+                            <Label Text="{Binding TotalPlans}" FontSize="22" FontAttributes="Bold" TextColor="#101828" />
+                        </VerticalStackLayout>
+                    </Frame>
+                    <Frame Grid.Column="1" Padding="12" CornerRadius="8" HasShadow="False" BorderColor="#DCE3EA" BackgroundColor="White">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Ready / Ongoing" FontSize="12" TextColor="#667085" />
+                            <Label Text="{Binding ReadyPlans}" FontSize="22" FontAttributes="Bold" TextColor="#047857" />
+                        </VerticalStackLayout>
+                    </Frame>
+                    <Frame Grid.Row="1" Padding="12" CornerRadius="8" HasShadow="False" BorderColor="#DCE3EA" BackgroundColor="White">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Permit Attention" FontSize="12" TextColor="#667085" />
+                            <Label Text="{Binding PermitAttention}" FontSize="22" FontAttributes="Bold" TextColor="#B45309" />
+                        </VerticalStackLayout>
+                    </Frame>
+                    <Frame Grid.Row="1" Grid.Column="1" Padding="12" CornerRadius="8" HasShadow="False" BorderColor="#DCE3EA" BackgroundColor="White">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="High Risk" FontSize="12" TextColor="#667085" />
+                            <Label Text="{Binding HighRiskPlans}" FontSize="22" FontAttributes="Bold" TextColor="#B42318" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </Grid>
+
+                <Frame Padding="12" CornerRadius="8" HasShadow="False" BorderColor="#DCE3EA" BackgroundColor="White">
+                    <VerticalStackLayout Spacing="8">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <Entry Placeholder="Vendor"
+                                   Text="{Binding VendorFilter}" />
+                            <Entry Grid.Column="1"
+                                   Placeholder="Area"
+                                   Text="{Binding AreaFilter}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <Picker ItemsSource="{Binding StatusOptions}"
+                                    SelectedItem="{Binding StatusFilter}" />
+                            <Picker Grid.Column="1"
+                                    ItemsSource="{Binding RiskOptions}"
+                                    SelectedItem="{Binding RiskFilter}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Entry Placeholder="PIC MTC"
+                                   Text="{Binding PicMtcFilter}" />
+                            <Button Grid.Column="1"
+                                    Text="Filter"
+                                    BackgroundColor="#3700B3"
+                                    TextColor="White"
+                                    Clicked="Filter_Clicked" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Label Text="Reminders"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="#101828" />
+                <CollectionView ItemsSource="{Binding Reminders}"
+                                HeightRequest="170"
+                                EmptyView="No reminders">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Margin="0,3" Padding="10" CornerRadius="8" HasShadow="False" BorderColor="#F1C40F" BackgroundColor="#FFFBEB">
+                                <VerticalStackLayout Spacing="2">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding VendorName}" FontAttributes="Bold" TextColor="#101828" />
+                                        <Label Grid.Column="1" Text="{Binding Severity}" TextColor="#B45309" FontSize="12" />
+                                    </Grid>
+                                    <Label Text="{Binding Message}" FontSize="12" TextColor="#667085" />
+                                    <Label Text="{Binding WorkTitle}" FontSize="12" TextColor="#344054" />
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label Text="Vendor Work Schedule"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="#101828" />
+                <CollectionView ItemsSource="{Binding Plans}"
+                                EmptyView="No contractor plans found">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Margin="0,4" Padding="12" CornerRadius="8" HasShadow="False" BorderColor="#DCE3EA" BackgroundColor="White">
+                                <VerticalStackLayout Spacing="6">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding VendorName}" FontSize="16" FontAttributes="Bold" TextColor="#101828" />
+                                        <Label Grid.Column="1" Text="{Binding Status}" FontSize="12" TextColor="#3700B3" />
+                                    </Grid>
+                                    <Label Text="{Binding WorkTitle}" TextColor="#344054" />
+                                    <Label Text="{Binding WorkArea, StringFormat='Area: {0}'}" FontSize="12" TextColor="#667085" />
+                                    <Label Text="{Binding ScheduleText, StringFormat='Schedule: {0}'}" FontSize="12" TextColor="#667085" />
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                        <Label Text="{Binding VendorPicName, StringFormat='PIC Vendor: {0}'}" FontSize="12" TextColor="#667085" />
+                                        <Label Grid.Column="1" Text="{Binding InternalPicName, StringFormat='PIC MTC: {0}'}" FontSize="12" TextColor="#667085" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                        <Label Text="{Binding PermitDocumentStatus, StringFormat='Permit: {0}'}" FontSize="12" TextColor="#B45309" />
+                                        <Label Grid.Column="1" Text="{Binding DurationText, StringFormat='Duration: {0}'}" FontSize="12" TextColor="#667085" />
+                                    </Grid>
+                                    <Label Text="{Binding RiskSummary, StringFormat='Risk: {0}'}" FontSize="12" TextColor="#B42318" />
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

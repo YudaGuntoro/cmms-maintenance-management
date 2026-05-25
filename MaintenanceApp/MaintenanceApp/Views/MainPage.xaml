@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MaintenanceApp.Views.MainPage"
+             Title="Maintenance App"
+             BackgroundColor="White"
+             Shell.BackgroundColor="#3700B3"
+             Shell.ForegroundColor="White"
+             Shell.TitleColor="White">
+
+    <VerticalStackLayout 
+        VerticalOptions="Center" 
+        HorizontalOptions="Center"
+        Spacing="15">
+
+        <Image
+               Source="Resources/Images/tohologo.png"
+               WidthRequest="200"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               Aspect="AspectFit"
+               Margin="0,0,0,50"/>
+       
+    </VerticalStackLayout>
+</ContentPage>

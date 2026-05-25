@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MaintenanceApp.Views.WorkOrderDetailPage"
+             Title="Work Order Detail"
+             BackgroundColor="White"
+             Shell.BackgroundColor="#3700B3"
+             Shell.ForegroundColor="White"
+             Shell.TitleColor="White">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="10">
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="#B00020"
+                   IsVisible="{Binding HasError}" />
+
+            <Label Text="{Binding WorkOrder.WoNumber}"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="#202124" />
+            <Label Text="{Binding WorkOrder.Title}"
+                   FontSize="18"
+                   TextColor="#202124" />
+            <Label Text="{Binding WorkOrder.Status, StringFormat='Status: {0}'}"
+                   TextColor="#3700B3" />
+            <Label Text="{Binding WorkOrder.Priority, StringFormat='Priority: {0}'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.MaintenanceType, StringFormat='Type: {0}'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.AssetId, StringFormat='Asset ID: {0}'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.AssignedTo, StringFormat='Technician ID: {0}'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.DowntimeMinutes, StringFormat='Downtime: {0} min'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.RepairMinutes, StringFormat='Repair: {0} min'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.FailureCode, StringFormat='Failure: {0}'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.RootCause, StringFormat='Root Cause: {0}'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.ActionTaken, StringFormat='Action: {0}'}"
+                   TextColor="#666666" />
+            <Label Text="{Binding WorkOrder.Result, StringFormat='Result: {0}'}"
+                   TextColor="#666666" />
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                <Button Text="Assign"
+                        BackgroundColor="#3700B3"
+                        TextColor="White"
+                        Clicked="Assign_Clicked" />
+                <Button Grid.Column="1"
+                        Text="Start"
+                        BackgroundColor="#3700B3"
+                        TextColor="White"
+                        Clicked="Start_Clicked" />
+                <Button Grid.Row="1"
+                        Text="Complete"
+                        BackgroundColor="#3700B3"
+                        TextColor="White"
+                        Clicked="Complete_Clicked" />
+                <Button Grid.Row="1"
+                        Grid.Column="1"
+                        Text="Close"
+                        BackgroundColor="#3700B3"
+                        TextColor="White"
+                        Clicked="Close_Clicked" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

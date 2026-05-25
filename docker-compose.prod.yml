@@ -1,0 +1,42 @@
+services:
+  api:
+    build:
+      context: ./MaintenanceApp
+      dockerfile: MaintenanceApp.API/Dockerfile
+    container_name: maintenance-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: ${MYSQL_CONNECTION_STRING}
+      Jwt__Issuer: ${JWT_ISSUER:-MaintenanceApp}
+      Jwt__Audience: ${JWT_AUDIENCE:-MaintenanceApp.Frontend}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY}
+      Jwt__ExpiresHours: ${JWT_EXPIRES_HOURS:-8}
+      Cors__AllowedOrigins__0: ${FRONTEND_ORIGIN}
+      Swagger__Enabled: ${SWAGGER_ENABLED:-false}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:${API_HOST_PORT:-5241}:8080"
+    volumes:
+      - maintenance-api-logs:/app/logs
+
+  frontend:
+    build:
+      context: ./Frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+    container_name: maintenance-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "127.0.0.1:${FRONTEND_HOST_PORT:-3000}:3000"
+    depends_on:
+      - api
+
+volumes:
+  maintenance-api-logs:

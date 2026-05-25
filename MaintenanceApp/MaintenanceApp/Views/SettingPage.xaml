@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MaintenanceApp.Views.SettingPage"
+             Title="Setting"
+             Shell.BackgroundColor="#3700B3"
+             BackgroundColor="White"
+             Shell.ForegroundColor="White"
+             Shell.TitleColor="White">
+    
+    <VerticalStackLayout
+        Padding="0,40,0,0"
+        HorizontalOptions="CenterAndExpand"
+        VerticalOptions="CenterAndExpand">
+        <!-- Centered Image -->
+        
+        <Image
+            Source="Resources/Images/tohologo.png"
+            WidthRequest="200"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Aspect="AspectFit"
+            Margin="0,0,0,50"/>
+
+        <!-- StackLayout for IP Address -->
+        <StackLayout
+            Padding="0,20,0,0"
+            Spacing="0"
+            WidthRequest="250"
+            HorizontalOptions="Center">
+
+            <Label
+                x:Name="labelIp"
+                Text="Api Host Url:"
+                VerticalOptions="Center"
+                FontAttributes="Bold"
+                Margin="0,0,0,5"
+                TextColor="Black"/>
+
+            <Frame
+                CornerRadius="5"
+                HasShadow="True"
+                Padding="0"
+                Margin="0"
+                BorderColor="Gray"
+                BackgroundColor="White">
+
+                <Entry
+                    x:Name="EntryIp"
+                    Placeholder="Enter IP Address"
+                    FontAttributes="Bold"
+                    WidthRequest="300"
+                    TextColor="Black"
+                    FontSize="14"
+                    HorizontalTextAlignment="Center"/>
+            </Frame>
+        </StackLayout>
+
+        <!-- Submit Button -->
+        <Button
+            Margin="0,20,0,0"
+            x:Name="BtnSubmit"
+            Text="Submit"
+            WidthRequest="200"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            BackgroundColor="#3700B3"
+            TextColor="White"
+            FontAttributes="Bold"
+            Clicked="BtnSubmit_Clicked"/>
+
+        <!-- Test API Button -->
+        <Button
+            Margin="0,20,0,0"
+            x:Name="BtnPingTest"
+            Text="Ping To Host"
+            WidthRequest="200"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            BackgroundColor="#3700B3"
+            TextColor="White"
+            FontAttributes="Bold"
+            Clicked="BtnPingTest_Clicked"/>
+    </VerticalStackLayout>
+</ContentPage>

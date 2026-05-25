@@ -1,0 +1,187 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MaintenanceApp.Views.PreventivePage"
+             Title="Preventive Maintenance"
+             Shell.BackgroundColor="#3700B3"
+             BackgroundColor="White"
+             Shell.ForegroundColor="White"
+             Shell.TitleColor="White">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Spacing="5"
+            Padding="20">
+
+            <!-- Line Input -->
+            <StackLayout Padding="0" Spacing="0">
+                <Label
+                    Text="Line :"
+                    VerticalOptions="Center"
+                    FontAttributes="Bold"
+                    TextColor="Black"
+                    Margin="0,0,0,5"/>
+                <Frame
+                    CornerRadius="5"
+                    HasShadow="True"
+                    Padding="0"
+                    Margin="0"
+                    BorderColor="Gray"
+                    BackgroundColor="White">
+                    <Entry
+                        x:Name="TBxLine"
+                        Placeholder="Line"
+                        WidthRequest="250"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Center"/>
+                </Frame>
+            </StackLayout>
+
+            <!-- Machine Input -->
+            <StackLayout Padding="0" Spacing="0">
+                <Label
+                    Text="Machine :"
+                    VerticalOptions="Center"
+                    FontAttributes="Bold"
+                    TextColor="Black"
+                    Margin="0,0,0,5"/>
+                <Frame
+                    CornerRadius="5"
+                    HasShadow="True"
+                    Padding="0"
+                    Margin="0"
+                    BorderColor="Gray"
+                    BackgroundColor="White">
+                    <Entry
+                        x:Name="TBxMachine"
+                        Placeholder="Machine"
+                        WidthRequest="250"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Center"/>
+                </Frame>
+            </StackLayout>
+            
+            <!-- Technician Input -->
+            <StackLayout Padding="0" Spacing="0">
+                <Label
+                    Text="Technician :"
+                    VerticalOptions="Center"
+                    FontAttributes="Bold"
+                    TextColor="Black"
+                    Margin="0,0,0,5"/>
+                <Frame
+                    CornerRadius="5"
+                    HasShadow="True"
+                    Padding="0"
+                    Margin="0"
+                    BorderColor="Gray"
+                    BackgroundColor="White">
+                    <Entry
+                        x:Name="TBxTechnician"
+                        Placeholder="Technician"
+                        WidthRequest="250"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Center"/>
+                </Frame>
+            </StackLayout>
+
+            <!-- Action Input -->
+            <StackLayout Padding="0" Spacing="0">
+                <Label
+                    Text="Action :"
+                    VerticalOptions="Center"
+                    FontAttributes="Bold"
+                    TextColor="Black"
+                    Margin="0,0,0,5"/>
+                <Frame
+                    CornerRadius="5"
+                    HasShadow="True"
+                    HeightRequest="100"
+                    Padding="0"
+                    Margin="0"
+                    BorderColor="Gray"
+                    BackgroundColor="White">
+                    <Editor
+                        x:Name="TBxAction"
+                        Placeholder="Action"
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Center"
+                        VerticalTextAlignment="Center"/>
+                </Frame>
+            </StackLayout>
+
+            <!-- Image Capture -->
+            <StackLayout Padding="0" Spacing="5">
+                <Label
+                    Text="Actual Picture :"
+                    VerticalOptions="Center"
+                    FontAttributes="Bold"
+                    TextColor="Black"
+                    Margin="0,0,0,5"/>
+                <Frame
+                    CornerRadius="5"
+                    HasShadow="True"
+                    HeightRequest="250"
+                    Padding="0"
+                    Margin="0"
+                    BorderColor="Gray"
+                    BackgroundColor="White">
+                    <Image
+                        Source="Resources/Images/camera.png"
+                        x:Name="CapturedImage"
+                        WidthRequest="250"
+                        HeightRequest="250"
+                        Aspect="AspectFit">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnImageTapped" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+            </StackLayout>
+
+            <!-- Submit Button with ActivityIndicator -->
+            <AbsoluteLayout
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Margin="0,20,0,0">
+
+                <ActivityIndicator
+                    x:Name="ActivityIndicator"
+                    IsRunning="False"
+                    IsVisible="False"
+                    Color="White"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    AbsoluteLayout.LayoutBounds="0.5,0.5,50,50"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                
+                <Button
+                    x:Name="BtnSubmit"
+                    Text="Submit"
+                    WidthRequest="200"
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    BackgroundColor="#3700B3"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    Clicked="BtnSubmit_Clicked"
+                    AbsoluteLayout.LayoutBounds="0.5,0.5,200,50"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"/>
+            </AbsoluteLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

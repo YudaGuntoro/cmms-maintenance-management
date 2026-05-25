@@ -1,0 +1,16 @@
+**/.vs/
+**/.idea/
+**/.config/
+**/bin/
+**/obj/
+**/verify-bin/
+**/verify-obj/
+**/.verify-*/
+**/logs/
+**/*.log
+**/*.lscache
+**/*.user
+**/*.suo
+
+MaintenanceApp.API/Settings.ini
+DatabaseMigratorTemp/

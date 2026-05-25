@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MaintenanceApp.ViewsModel"
+             x:Class="MaintenanceApp.Views.MachineTroublePage"
+             Title="Machine Trouble"
+             BackgroundColor="White"
+             Shell.BackgroundColor="#3700B3"
+             Shell.ForegroundColor="White"
+             Shell.TitleColor="White">
+
+    <StackLayout Padding="10">
+        <ListView x:Name="MachineTroubleListView"
+          ItemsSource="{Binding MachineStatus}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell 
+                Text="{Binding LineName}" 
+                Detail="{Binding MachineName, StringFormat='Machine: {0}\nStatus: {1}\nStart: {2:yyyy-MM-dd HH:mm}\nEnd: {3:yyyy-MM-dd HH:mm}'}"
+                TextColor="Black" 
+                DetailColor="Black"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        <Button 
+        ImageSource="Resources/Images/home.png" 
+        WidthRequest="50" 
+        HeightRequest="50" 
+        Clicked="Button_Clicked" />
+
+
+    </StackLayout>
+</ContentPage>
