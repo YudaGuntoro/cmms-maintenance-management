@@ -5,6 +5,7 @@
 Settings.ini
 **/Settings.ini
 deploy/backup.env
+deploy/*.env
 
 # .NET
 **/bin/
