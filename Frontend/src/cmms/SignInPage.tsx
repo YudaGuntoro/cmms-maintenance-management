@@ -89,7 +89,7 @@ export default function SignInPage() {
             </div>
           ) : null}
 
-          <form onSubmit={(event) => void submit(event)}>
+          <form autoComplete="off" onSubmit={(event) => void submit(event)}>
             <div className="space-y-6">
               <div>
                 <Label htmlFor="username">
@@ -100,10 +100,11 @@ export default function SignInPage() {
                     <UserIcon className="size-5 fill-current" />
                   </span>
                   <Input
+                    autoComplete="off"
                     className="h-12 pl-12"
                     disabled={loading}
                     id="username"
-                    name="username"
+                    name="cmms-login-user"
                     onChange={(event) => setUsername(event.target.value)}
                     placeholder="Masukkan username"
                     type="text"
@@ -121,6 +122,7 @@ export default function SignInPage() {
                     <LockIcon className="size-5 fill-current" />
                   </span>
                   <Input
+                    autoComplete="new-password"
                     className="h-12 pl-12 pr-12"
                     disabled={loading}
                     id="password"
