@@ -21,7 +21,7 @@ export default function SignInPage() {
   const searchParams = useSearchParams();
   const nextPath = safeNextPath(searchParams.get("next"));
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState("demo");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,13 +101,13 @@ export default function SignInPage() {
                   </span>
                   <Input
                     className="h-12 pl-12"
-                    defaultValue={username}
                     disabled={loading}
                     id="username"
                     name="username"
                     onChange={(event) => setUsername(event.target.value)}
                     placeholder="Masukkan username"
                     type="text"
+                    value={username}
                   />
                 </div>
               </div>
