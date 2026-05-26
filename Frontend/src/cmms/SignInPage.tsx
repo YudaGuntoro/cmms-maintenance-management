@@ -5,7 +5,7 @@ import Label from "@/components/form/Label";
 import { EyeCloseIcon, EyeIcon, LockIcon, UserIcon } from "@/icons";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiPost } from "./api";
 import { hasValidAuthSession, saveAuthSession } from "./auth";
@@ -20,9 +20,13 @@ export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = safeNextPath(searchParams.get("next"));
+  const usernameFieldId = useId().replace(/:/g, "");
+  const passwordFieldId = useId().replace(/:/g, "");
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [autofillLocked, setAutofillLocked] = useState(true);
+  const [fieldNonce, setFieldNonce] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,8 +45,9 @@ export default function SignInPage() {
       });
     };
 
+    setFieldNonce(crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`);
     clearAutofill();
-    const timers = [window.setTimeout(clearAutofill, 150), window.setTimeout(clearAutofill, 600)];
+    const timers = [150, 600, 1200, 2400].map((delay) => window.setTimeout(clearAutofill, delay));
     return () => timers.forEach(window.clearTimeout);
   }, []);
 
@@ -103,12 +108,10 @@ export default function SignInPage() {
             </div>
           ) : null}
 
-          <form autoComplete="off" onSubmit={(event) => void submit(event)}>
-            <input aria-hidden="true" autoComplete="username" className="pointer-events-none absolute -left-[9999px] h-0 w-0 opacity-0" tabIndex={-1} type="text" />
-            <input aria-hidden="true" autoComplete="current-password" className="pointer-events-none absolute -left-[9999px] h-0 w-0 opacity-0" tabIndex={-1} type="password" />
+          <form autoComplete="off" data-form-type="other" onSubmit={(event) => void submit(event)}>
             <div className="space-y-6">
               <div>
-                <Label htmlFor="cmms-user-identity">
+                <Label htmlFor={`cmms-user-${usernameFieldId}`}>
                   Username <span className="text-error-500">*</span>
                 </Label>
                 <div className="relative">
@@ -116,22 +119,33 @@ export default function SignInPage() {
                     <UserIcon className="size-5 fill-current" />
                   </span>
                   <Input
-                    autoComplete="one-time-code"
+                    autoCapitalize="none"
+                    autoComplete="new-password"
                     className="h-12 pl-12"
+                    data-1p-ignore="true"
                     data-cmms-login-field="true"
+                    data-form-type="other"
+                    data-lpignore="true"
                     disabled={loading}
-                    id="cmms-user-identity"
-                    name="cmms-user-identity"
+                    id={`cmms-user-${usernameFieldId}`}
+                    inputMode="text"
+                    name={fieldNonce ? `cmms-operator-${fieldNonce}` : `cmms-operator-${usernameFieldId}`}
                     onChange={(event) => setUsername(event.target.value)}
+                    onFocus={() => {
+                      setAutofillLocked(false);
+                      setUsername((current) => (current === "demo" ? "" : current));
+                    }}
                     placeholder="Masukkan username"
-                    type="text"
+                    readOnly={autofillLocked}
+                    spellCheck={false}
+                    type="search"
                     value={username}
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="password">
+                <Label htmlFor={`cmms-secret-${passwordFieldId}`}>
                   Password <span className="text-error-500">*</span>
                 </Label>
                 <div className="relative">
@@ -141,12 +155,17 @@ export default function SignInPage() {
                   <Input
                     autoComplete="new-password"
                     className="h-12 pl-12 pr-12"
+                    data-1p-ignore="true"
                     data-cmms-login-field="true"
+                    data-form-type="other"
+                    data-lpignore="true"
                     disabled={loading}
-                    id="cmms-secret"
-                    name="cmms-secret"
+                    id={`cmms-secret-${passwordFieldId}`}
+                    name={fieldNonce ? `cmms-key-${fieldNonce}` : `cmms-key-${passwordFieldId}`}
                     onChange={(event) => setPassword(event.target.value)}
+                    onFocus={() => setAutofillLocked(false)}
                     placeholder="Masukkan password"
+                    readOnly={autofillLocked}
                     type={showPassword ? "text" : "password"}
                     value={password}
                   />

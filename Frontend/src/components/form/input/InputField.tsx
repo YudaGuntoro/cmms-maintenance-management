@@ -8,8 +8,16 @@ interface InputProps {
   defaultValue?: string | number;
   value?: string | number;
   autoComplete?: string;
+  autoCapitalize?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  readOnly?: boolean;
+  spellCheck?: boolean;
   "data-cmms-login-field"?: string;
+  "data-form-type"?: string;
+  "data-lpignore"?: string;
+  "data-1p-ignore"?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   className?: string;
   min?: string;
   max?: string;
@@ -28,8 +36,16 @@ const Input: FC<InputProps> = ({
   defaultValue,
   value,
   autoComplete,
+  autoCapitalize,
+  inputMode,
+  readOnly,
+  spellCheck,
   "data-cmms-login-field": dataCmmsLoginField,
+  "data-form-type": dataFormType,
+  "data-lpignore": dataLpIgnore,
+  "data-1p-ignore": dataOnePasswordIgnore,
   onChange,
+  onFocus,
   className = "",
   min,
   max,
@@ -63,8 +79,16 @@ const Input: FC<InputProps> = ({
         defaultValue={defaultValue}
         value={value}
         autoComplete={autoComplete}
+        autoCapitalize={autoCapitalize}
+        inputMode={inputMode}
+        readOnly={readOnly}
+        spellCheck={spellCheck}
         data-cmms-login-field={dataCmmsLoginField}
+        data-form-type={dataFormType}
+        data-lpignore={dataLpIgnore}
+        data-1p-ignore={dataOnePasswordIgnore}
         onChange={onChange}
+        onFocus={onFocus}
         min={min}
         max={max}
         step={step}
