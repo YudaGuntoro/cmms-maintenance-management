@@ -50,8 +50,48 @@ type WorkOrderActionForm = {
   result: string;
 };
 
+type MasterLookup = {
+  id: number;
+  code: string;
+  name: string;
+  is_active?: boolean;
+};
+
+type WorkOrderMasterLookups = {
+  maintenanceTypes: MasterLookup[];
+  workOrderPriorities: MasterLookup[];
+  workOrderStatuses: MasterLookup[];
+};
+
 const openWorkOrderStatuses = new Set(["OPEN", "ASSIGNED", "IN_PROGRESS", "PENDING"]);
 const workOrderViewOptions: SelectOption[] = [{ label: "Open backlog", value: "open" }];
+
+const maintenanceTypeFallbackIds: Record<string, number> = {
+  PREVENTIVE: 1,
+  CORRECTIVE: 2,
+  BREAKDOWN: 3,
+  PREDICTIVE: 4,
+  INSPECTION: 5,
+  CONTRACTOR_SUPERVISION: 6,
+};
+
+const workOrderPriorityFallbackIds: Record<string, number> = {
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3,
+  URGENT: 4,
+};
+
+const workOrderStatusFallbackIds: Record<string, number> = {
+  OPEN: 1,
+  ASSIGNED: 2,
+  IN_PROGRESS: 3,
+  PENDING: 4,
+  DRAFT: 5,
+  COMPLETED: 6,
+  CLOSED: 7,
+  CANCELLED: 8,
+};
 
 const emptyForm: WorkOrderForm = {
   wo_number: "",
@@ -129,15 +169,34 @@ function toForm(workOrder?: WorkOrder): WorkOrderForm {
   };
 }
 
-function payload(form: WorkOrderForm) {
+function masterOptions(items: MasterLookup[], fallback: SelectOption[]) {
+  const activeItems = items.filter((item) => item.is_active !== false);
+  if (!activeItems.length) {
+    return fallback;
+  }
+
+  return activeItems.map((item) => ({
+    label: item.name || item.code,
+    value: item.code,
+  }));
+}
+
+function masterId(items: MasterLookup[], code: string, fallbackIds: Record<string, number>) {
+  return items.find((item) => item.code === code)?.id ?? fallbackIds[code] ?? null;
+}
+
+function payload(form: WorkOrderForm, masterLookups: WorkOrderMasterLookups) {
   return {
     wo_number: form.wo_number || "",
     asset_id: Number(form.asset_id),
     problem_report_id: form.problem_report_id ? Number(form.problem_report_id) : null,
     title: form.title,
     description: form.description || null,
+    maintenance_type_id: masterId(masterLookups.maintenanceTypes, form.maintenance_type, maintenanceTypeFallbackIds),
     maintenance_type: form.maintenance_type,
+    priority_id: masterId(masterLookups.workOrderPriorities, form.priority, workOrderPriorityFallbackIds),
     priority: form.priority,
+    status_id: masterId(masterLookups.workOrderStatuses, form.status, workOrderStatusFallbackIds),
     status: form.status,
     reported_by: form.reported_by || null,
     assigned_to: form.assigned_to ? Number(form.assigned_to) : null,
@@ -150,7 +209,7 @@ function payload(form: WorkOrderForm) {
   };
 }
 
-function validateWorkOrderForm(form: WorkOrderForm) {
+function validateWorkOrderForm(form: WorkOrderForm, masterLookups: WorkOrderMasterLookups) {
   const missing = [
     { label: "Asset", value: form.asset_id },
     { label: "Title", value: form.title },
@@ -161,7 +220,17 @@ function validateWorkOrderForm(form: WorkOrderForm) {
     .filter((item) => !String(item.value || "").trim())
     .map((item) => item.label);
 
-  return missing.length ? `${missing.join(", ")} wajib diisi.` : null;
+  if (missing.length) {
+    return `${missing.join(", ")} wajib diisi.`;
+  }
+
+  const invalidMaster = [
+    { label: "Type", id: masterId(masterLookups.maintenanceTypes, form.maintenance_type, maintenanceTypeFallbackIds) },
+    { label: "Priority", id: masterId(masterLookups.workOrderPriorities, form.priority, workOrderPriorityFallbackIds) },
+    { label: "Status", id: masterId(masterLookups.workOrderStatuses, form.status, workOrderStatusFallbackIds) },
+  ].find((item) => !item.id);
+
+  return invalidMaster ? `${invalidMaster.label} tidak ditemukan di master data.` : null;
 }
 
 function actionModalTitle(type: WorkOrderActionType | null) {
@@ -195,6 +264,9 @@ export default function WorkOrdersPage() {
   const [spareparts, setSpareparts] = useState<Sparepart[]>([]);
   const [failureCodes, setFailureCodes] = useState<FailureCode[]>([]);
   const [rootCauses, setRootCauses] = useState<RootCause[]>([]);
+  const [maintenanceTypes, setMaintenanceTypes] = useState<MasterLookup[]>([]);
+  const [workOrderPriorities, setWorkOrderPriorities] = useState<MasterLookup[]>([]);
+  const [workOrderStatuses, setWorkOrderStatuses] = useState<MasterLookup[]>([]);
   const [filters, setFilters] = useState<WorkOrderFilters>(() => filtersFromSearchParams(searchParams));
   const [quickView, setQuickView] = useState(() => viewFromSearchParams(searchParams));
   const [search, setSearch] = useState("");
@@ -227,6 +299,14 @@ export default function WorkOrdersPage() {
   const sparepartOptions = useMemo<SelectOption[]>(() => spareparts.map((part) => ({ label: `${part.part_code} - ${part.part_name} (${formatNumber(part.stock_qty)} ${part.unit})`, value: String(part.id) })), [spareparts]);
   const failureOptions = useMemo<SelectOption[]>(() => failureCodes.map((item) => ({ label: `${item.code} - ${item.name}`, value: item.code })), [failureCodes]);
   const rootCauseOptions = useMemo<SelectOption[]>(() => rootCauses.map((item) => ({ label: `${item.code} - ${item.name}`, value: item.code })), [rootCauses]);
+  const maintenanceTypeOptions = useMemo<SelectOption[]>(() => masterOptions(maintenanceTypes, options.maintenanceType), [maintenanceTypes]);
+  const workOrderPriorityOptions = useMemo<SelectOption[]>(() => masterOptions(workOrderPriorities, options.workOrderPriority), [workOrderPriorities]);
+  const workOrderStatusOptions = useMemo<SelectOption[]>(() => masterOptions(workOrderStatuses, options.workOrderStatus), [workOrderStatuses]);
+  const masterLookups = useMemo<WorkOrderMasterLookups>(() => ({
+    maintenanceTypes,
+    workOrderPriorities,
+    workOrderStatuses,
+  }), [maintenanceTypes, workOrderPriorities, workOrderStatuses]);
 
   useEffect(() => {
     const params = new URLSearchParams(queryKey);
@@ -259,7 +339,18 @@ export default function WorkOrdersPage() {
     setLoading(true);
     setError(null);
     try {
-      const [workOrderData, reportData, assetData, technicianData, sparepartData, failureData, rootCauseData] = await Promise.all([
+      const [
+        workOrderData,
+        reportData,
+        assetData,
+        technicianData,
+        sparepartData,
+        failureData,
+        rootCauseData,
+        maintenanceTypeData,
+        priorityData,
+        statusData,
+      ] = await Promise.all([
         apiGet<WorkOrder[]>(`/api/work-orders${buildQuery(filters)}`),
         apiGet<ProblemReport[]>("/api/problem-reports"),
         apiGet<Asset[]>("/api/assets"),
@@ -267,6 +358,9 @@ export default function WorkOrdersPage() {
         apiGet<Sparepart[]>("/api/spareparts"),
         apiGet<FailureCode[]>("/api/failure-codes"),
         apiGet<RootCause[]>("/api/root-causes"),
+        apiGet<MasterLookup[]>("/api/maintenance-types"),
+        apiGet<MasterLookup[]>("/api/work-order-priorities"),
+        apiGet<MasterLookup[]>("/api/work-order-statuses"),
       ]);
       setWorkOrders(workOrderData || []);
       setProblemReports(reportData || []);
@@ -275,6 +369,9 @@ export default function WorkOrdersPage() {
       setSpareparts(sparepartData || []);
       setFailureCodes(failureData || []);
       setRootCauses(rootCauseData || []);
+      setMaintenanceTypes(maintenanceTypeData || []);
+      setWorkOrderPriorities(priorityData || []);
+      setWorkOrderStatuses(statusData || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load work orders.");
     } finally {
@@ -383,7 +480,7 @@ export default function WorkOrdersPage() {
     setError(null);
     setSuccess(null);
 
-    const validationMessage = validateWorkOrderForm(form);
+    const validationMessage = validateWorkOrderForm(form, masterLookups);
     if (validationMessage) {
       setError(validationMessage);
       return;
@@ -392,10 +489,10 @@ export default function WorkOrdersPage() {
     setSaving(true);
     try {
       if (editing) {
-        await apiPut<WorkOrder>(`/api/work-orders/${editing.id}`, payload(form));
+        await apiPut<WorkOrder>(`/api/work-orders/${editing.id}`, payload(form, masterLookups));
         setSuccess("Work order updated successfully.");
       } else {
-        await apiPost<WorkOrder>("/api/work-orders", payload(form));
+        await apiPost<WorkOrder>("/api/work-orders", payload(form, masterLookups));
         setSuccess("Work order created successfully.");
       }
       setFormOpen(false);
@@ -538,9 +635,9 @@ export default function WorkOrdersPage() {
             <SelectInput label="Asset" name="asset_id" onChange={(event) => setForm((current) => ({ ...current, asset_id: event.target.value }))} options={assetOptions} placeholder="Select Asset" required value={form.asset_id} />
             <SelectInput label="Report Reference" name="problem_report_id" onChange={(event) => selectProblemReport(event.target.value)} options={problemReportOptions} value={form.problem_report_id} />
             <TextInput label="Title" name="title" onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} required value={form.title} />
-            <SelectInput label="Type" name="maintenance_type" onChange={(event) => setForm((current) => ({ ...current, maintenance_type: event.target.value }))} options={options.maintenanceType} required value={form.maintenance_type} />
-            <SelectInput label="Priority" name="priority" onChange={(event) => setForm((current) => ({ ...current, priority: event.target.value }))} options={options.workOrderPriority} required value={form.priority} />
-            <SelectInput label="Status" name="status" onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))} options={options.workOrderStatus} required value={form.status} />
+            <SelectInput label="Type" name="maintenance_type" onChange={(event) => setForm((current) => ({ ...current, maintenance_type: event.target.value }))} options={maintenanceTypeOptions} required value={form.maintenance_type} />
+            <SelectInput label="Priority" name="priority" onChange={(event) => setForm((current) => ({ ...current, priority: event.target.value }))} options={workOrderPriorityOptions} required value={form.priority} />
+            <SelectInput label="Status" name="status" onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))} options={workOrderStatusOptions} required value={form.status} />
             <TextInput label="Reported By" name="reported_by" onChange={(event) => setForm((current) => ({ ...current, reported_by: event.target.value }))} value={form.reported_by} />
             <SelectInput label="Assigned To" name="assigned_to" onChange={(event) => setForm((current) => ({ ...current, assigned_to: event.target.value }))} options={technicianOptions} value={form.assigned_to} />
             <TextInput label="Reported At" name="reported_at" onChange={(event) => setForm((current) => ({ ...current, reported_at: event.target.value }))} type="datetime-local" value={form.reported_at || nowDateTimeLocal()} />
@@ -562,8 +659,8 @@ export default function WorkOrdersPage() {
             <EntriesSelect onChange={(value) => { setPageSize(value); setPage(1); }} value={pageSize} />
             <InlineSelect onChange={setQuickView} options={workOrderViewOptions} placeholder="All Views" value={quickView} />
             <InlineSelect onChange={(value) => setFilters((current) => ({ ...current, asset_id: value }))} options={assetOptions} placeholder="All Assets" value={filters.asset_id} />
-            <InlineSelect onChange={(value) => setFilters((current) => ({ ...current, status: value }))} options={options.workOrderStatus} placeholder="All Status" value={filters.status} />
-            <InlineSelect onChange={(value) => setFilters((current) => ({ ...current, priority: value }))} options={options.workOrderPriority} placeholder="All Priority" value={filters.priority} />
+            <InlineSelect onChange={(value) => setFilters((current) => ({ ...current, status: value }))} options={workOrderStatusOptions} placeholder="All Status" value={filters.status} />
+            <InlineSelect onChange={(value) => setFilters((current) => ({ ...current, priority: value }))} options={workOrderPriorityOptions} placeholder="All Priority" value={filters.priority} />
             <button className="primary-button" onClick={openCreate} type="button"><Icon name="plus" />Create</button>
           </>
         )}
