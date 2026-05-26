@@ -32,6 +32,20 @@ export default function SignInPage() {
     }
   }, [nextPath, router]);
 
+  useEffect(() => {
+    const clearAutofill = () => {
+      setUsername("");
+      setPassword("");
+      document.querySelectorAll<HTMLInputElement>("[data-cmms-login-field]").forEach((field) => {
+        field.value = "";
+      });
+    };
+
+    clearAutofill();
+    const timers = [window.setTimeout(clearAutofill, 150), window.setTimeout(clearAutofill, 600)];
+    return () => timers.forEach(window.clearTimeout);
+  }, []);
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -90,9 +104,11 @@ export default function SignInPage() {
           ) : null}
 
           <form autoComplete="off" onSubmit={(event) => void submit(event)}>
+            <input aria-hidden="true" autoComplete="username" className="pointer-events-none absolute -left-[9999px] h-0 w-0 opacity-0" tabIndex={-1} type="text" />
+            <input aria-hidden="true" autoComplete="current-password" className="pointer-events-none absolute -left-[9999px] h-0 w-0 opacity-0" tabIndex={-1} type="password" />
             <div className="space-y-6">
               <div>
-                <Label htmlFor="username">
+                <Label htmlFor="cmms-user-identity">
                   Username <span className="text-error-500">*</span>
                 </Label>
                 <div className="relative">
@@ -100,11 +116,12 @@ export default function SignInPage() {
                     <UserIcon className="size-5 fill-current" />
                   </span>
                   <Input
-                    autoComplete="off"
+                    autoComplete="one-time-code"
                     className="h-12 pl-12"
+                    data-cmms-login-field="true"
                     disabled={loading}
-                    id="username"
-                    name="cmms-login-user"
+                    id="cmms-user-identity"
+                    name="cmms-user-identity"
                     onChange={(event) => setUsername(event.target.value)}
                     placeholder="Masukkan username"
                     type="text"
@@ -124,12 +141,14 @@ export default function SignInPage() {
                   <Input
                     autoComplete="new-password"
                     className="h-12 pl-12 pr-12"
+                    data-cmms-login-field="true"
                     disabled={loading}
-                    id="password"
-                    name="password"
+                    id="cmms-secret"
+                    name="cmms-secret"
                     onChange={(event) => setPassword(event.target.value)}
                     placeholder="Masukkan password"
                     type={showPassword ? "text" : "password"}
+                    value={password}
                   />
                   <button
                     aria-label={showPassword ? "Hide password" : "Show password"}

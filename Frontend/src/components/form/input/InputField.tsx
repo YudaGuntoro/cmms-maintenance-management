@@ -8,6 +8,7 @@ interface InputProps {
   defaultValue?: string | number;
   value?: string | number;
   autoComplete?: string;
+  "data-cmms-login-field"?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   min?: string;
@@ -27,6 +28,7 @@ const Input: FC<InputProps> = ({
   defaultValue,
   value,
   autoComplete,
+  "data-cmms-login-field": dataCmmsLoginField,
   onChange,
   className = "",
   min,
@@ -61,6 +63,7 @@ const Input: FC<InputProps> = ({
         defaultValue={defaultValue}
         value={value}
         autoComplete={autoComplete}
+        data-cmms-login-field={dataCmmsLoginField}
         onChange={onChange}
         min={min}
         max={max}
