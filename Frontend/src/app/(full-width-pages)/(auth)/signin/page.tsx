@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description: "Computerized Maintenance Management System (CMMS) sign in",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function SignIn() {
   return <SignInPage />;
 }
