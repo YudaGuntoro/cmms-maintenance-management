@@ -41,6 +41,21 @@ public static class WorkOrderRules
 
     public static void ValidateWorkOrderForSave(WorkOrder workOrder)
     {
+        if (workOrder.MaintenanceTypeId.GetValueOrDefault() <= 0)
+        {
+            throw new InvalidOperationException("Type wajib dipilih.");
+        }
+
+        if (workOrder.PriorityId.GetValueOrDefault() <= 0)
+        {
+            throw new InvalidOperationException("Priority wajib dipilih.");
+        }
+
+        if (workOrder.StatusId.GetValueOrDefault() <= 0)
+        {
+            throw new InvalidOperationException("Status wajib dipilih.");
+        }
+
         if (workOrder.Status == WorkOrderStatus.COMPLETED && !workOrder.CompletedAt.HasValue)
         {
             throw new InvalidOperationException("completed_at wajib saat status COMPLETED.");

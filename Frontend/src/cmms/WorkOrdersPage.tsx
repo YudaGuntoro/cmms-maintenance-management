@@ -150,6 +150,20 @@ function payload(form: WorkOrderForm) {
   };
 }
 
+function validateWorkOrderForm(form: WorkOrderForm) {
+  const missing = [
+    { label: "Asset", value: form.asset_id },
+    { label: "Title", value: form.title },
+    { label: "Type", value: form.maintenance_type },
+    { label: "Priority", value: form.priority },
+    { label: "Status", value: form.status },
+  ]
+    .filter((item) => !String(item.value || "").trim())
+    .map((item) => item.label);
+
+  return missing.length ? `${missing.join(", ")} wajib diisi.` : null;
+}
+
 function actionModalTitle(type: WorkOrderActionType | null) {
   if (type === "assign") return "Assign Technician";
   if (type === "complete") return "Complete Work Order";
@@ -366,9 +380,16 @@ export default function WorkOrdersPage() {
 
   async function saveWorkOrder(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSaving(true);
     setError(null);
     setSuccess(null);
+
+    const validationMessage = validateWorkOrderForm(form);
+    if (validationMessage) {
+      setError(validationMessage);
+      return;
+    }
+
+    setSaving(true);
     try {
       if (editing) {
         await apiPut<WorkOrder>(`/api/work-orders/${editing.id}`, payload(form));
