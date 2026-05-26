@@ -213,6 +213,49 @@ public class CmmsModuleTests
     }
 
     [Fact]
+    public async Task CreateWorkOrderFromProblemReport_ResolvesStatusId()
+    {
+        await using var db = CreateDbContext();
+        await SeedAssetAndTechnicianAsync(db);
+        db.ProblemReports.Add(new ProblemReport
+        {
+            Id = 27,
+            ReportNumber = "RPT-TEST-0001",
+            AssetId = 1,
+            Title = "Check boiler",
+            CategoryId = 2,
+            Category = ProblemReportCategory.BREAKDOWN,
+            PriorityId = 2,
+            Priority = WorkOrderPriority.MEDIUM,
+            StatusId = 4,
+            Status = ProblemReportStatus.PENDING,
+            ReportedBy = "CMMS Administrator"
+        });
+        await db.SaveChangesAsync();
+
+        var service = new WorkOrderService(new WorkOrderRepository(db));
+        var workOrder = await service.CreateWorkOrderAsync(new WorkOrder
+        {
+            AssetId = 1,
+            ProblemReportId = 27,
+            Title = "Check boiler",
+            MaintenanceTypeId = 3,
+            MaintenanceType = MaintenanceType.BREAKDOWN,
+            PriorityId = 2,
+            Priority = WorkOrderPriority.MEDIUM,
+            StatusId = 1,
+            Status = WorkOrderStatus.OPEN,
+            ReportedBy = "CMMS Administrator"
+        });
+
+        var saved = await db.WorkOrders.AsNoTracking().FirstAsync(x => x.Id == workOrder.Id);
+
+        Assert.Equal(1, workOrder.StatusId);
+        Assert.Equal(1, saved.StatusId);
+        Assert.Equal(4, (await db.ProblemReports.AsNoTracking().FirstAsync(x => x.Id == 27)).StatusId);
+    }
+
+    [Fact]
     public async Task ContractorMonitoring_CreatesPlanReminderAndSupervisionWorkOrder()
     {
         await using var db = CreateDbContext();

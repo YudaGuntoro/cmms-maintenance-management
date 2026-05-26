@@ -42,13 +42,10 @@ public static class CmmsMasterDataResolver
 
         workOrder.MaintenanceTypeId = maintenanceType.id;
         workOrder.MaintenanceType = maintenanceType.value;
-        workOrder.MaintenanceTypeDetail = null;
         workOrder.PriorityId = priority.id;
         workOrder.Priority = priority.value;
-        workOrder.PriorityDetail = null;
         workOrder.StatusId = status.id;
         workOrder.Status = status.value;
-        workOrder.StatusDetail = null;
     }
 
     public static async Task ApplyProblemReportMastersAsync(MaintenanceDbContext db, ProblemReport report)
@@ -59,13 +56,10 @@ public static class CmmsMasterDataResolver
 
         report.CategoryId = category.id;
         report.Category = category.value;
-        report.CategoryDetail = null;
         report.PriorityId = priority.id;
         report.Priority = priority.value;
-        report.PriorityDetail = null;
         report.StatusId = status.id;
         report.Status = status.value;
-        report.StatusDetail = null;
     }
 
     public static async Task ApplyDowntimeLogMastersAsync(MaintenanceDbContext db, DowntimeLog downtimeLog)
@@ -73,7 +67,6 @@ public static class CmmsMasterDataResolver
         var category = await ResolveDowntimeCategoryAsync(db, downtimeLog.DowntimeCategoryId, downtimeLog.DowntimeCategory);
         downtimeLog.DowntimeCategoryId = category.id;
         downtimeLog.DowntimeCategory = category.value;
-        downtimeLog.DowntimeCategoryDetail = null;
     }
 
     public static async Task ApplyPreventiveScheduleMastersAsync(MaintenanceDbContext db, PreventiveSchedule schedule)
@@ -83,26 +76,24 @@ public static class CmmsMasterDataResolver
 
         schedule.ScheduleTypeId = scheduleType.id;
         schedule.ScheduleType = scheduleType.value;
-        schedule.ScheduleTypeDetail = null;
         schedule.FrequencyTypeId = frequencyType.id;
         schedule.FrequencyType = frequencyType.value;
-        schedule.FrequencyTypeDetail = null;
     }
 
     public static async Task SetWorkOrderStatusAsync(MaintenanceDbContext db, WorkOrder workOrder, WorkOrderStatus status)
     {
         var resolved = await ResolveWorkOrderStatusAsync(db, null, status);
+        workOrder.StatusDetail = await RequireTrackedWorkOrderStatusAsync(db, resolved.id);
         workOrder.StatusId = resolved.id;
         workOrder.Status = resolved.value;
-        workOrder.StatusDetail = null;
     }
 
     public static async Task SetProblemReportStatusAsync(MaintenanceDbContext db, ProblemReport report, ProblemReportStatus status)
     {
         var resolved = await ResolveProblemReportStatusAsync(db, null, status);
+        report.StatusDetail = await RequireTrackedWorkOrderStatusAsync(db, resolved.id);
         report.StatusId = resolved.id;
         report.Status = resolved.value;
-        report.StatusDetail = null;
     }
 
     public static Task<int> GetMaintenanceTypeIdAsync(MaintenanceDbContext db, MaintenanceType value)
@@ -270,6 +261,17 @@ public static class CmmsMasterDataResolver
         }
 
         return id;
+    }
+
+    private static async Task<WorkOrderStatusMaster> RequireTrackedWorkOrderStatusAsync(MaintenanceDbContext db, int id)
+    {
+        var master = await db.WorkOrderStatuses.FirstOrDefaultAsync(x => x.Id == id);
+        if (master == null)
+        {
+            throw new InvalidOperationException("status tidak ditemukan di master data.");
+        }
+
+        return master;
     }
 
     private static TEnum Parse<TEnum>(string code, TEnum fallback) where TEnum : struct, Enum
