@@ -1,5 +1,6 @@
 using Maintenance.Domain.Response;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System.Net;
 
 namespace Maintenance.API.Controllers;
@@ -52,11 +53,18 @@ public abstract class CmmsControllerBase : ControllerBase
 
     protected IActionResult ApiBadRequest(Exception ex)
     {
+        Log.Error(ex, "Request failed: {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
+
+        var baseException = ex.GetBaseException();
+        var message = baseException.Message != ex.Message
+            ? $"{ex.Message} Detail: {baseException.Message}"
+            : ex.Message;
+
         return BadRequest(new ApiResponse<string>
         {
             Success = false,
             StatusCode = (int)HttpStatusCode.BadRequest,
-            Message = ex.Message,
+            Message = message,
             Data = null
         });
     }
